@@ -1,45 +1,42 @@
-import { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  Pressable,
-  Switch,
-  TextInput
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
+import { useCallback, useState } from 'react';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { RADII, SPACING, TYPOGRAPHY } from '../../constants';
 import { useTheme } from '../../contexts/ThemeContext';
 import { THEME_REGISTRY } from '../../theme';
-import { SPACING, RADII, TYPOGRAPHY } from '../../constants';
 
+import ScreenHeader from '../../components/progress/ScreenHeader';
+import ProfileCard from '../../components/settings/ProfileCard';
+import SettingsRow from '../../components/settings/SettingsRow';
+import SettingsSectionHeader from '../../components/settings/SettingsSectionHeader';
+import ThemePicker from '../../components/settings/ThemePicker';
+import ConfirmDialog from '../../components/shared/ConfirmDialog';
+import { TimePicker } from '../../components/shared/TimePicker';
 import {
-  resetOnboarding,
-  resetAllData,
   clearActiveUserId,
   ensureActiveUser,
-  getUserById,
-  getPreference,
-  setPreference,
   getActiveHabits,
-  getAllHabitsHistoryForDate,
-  getUserBadges,
+  getPreference,
   getRecentTimeEntries,
-  BADGE_DEFINITIONS
+  getUserBadges,
+  getUserById,
+  resetAllData,
+  resetOnboarding,
+  setPreference
 } from '../../db';
 import type { User } from '../../db/types';
-import ConfirmDialog from '../../components/shared/ConfirmDialog';
-import SettingsSectionHeader from '../../components/settings/SettingsSectionHeader';
-import SettingsRow from '../../components/settings/SettingsRow';
-import ThemePicker from '../../components/settings/ThemePicker';
-import ProfileCard from '../../components/settings/ProfileCard';
 import { useNotifications } from '../../hooks/useNotifications';
-import { TimePicker } from '../../components/shared/TimePicker';
 import { reconcileHabitReminders } from '../../lib/notifications/schedule';
-import ScreenHeader from '../../components/progress/ScreenHeader';
 
 export default function SettingsScreen() {
   const { colors, preference } = useTheme();
@@ -240,7 +237,6 @@ export default function SettingsScreen() {
         setResetting(false);
       }
     }
-    // For non-destructive dialogs (like privacy policy), just close
     setDialog(null);
   };
 
@@ -392,16 +388,8 @@ export default function SettingsScreen() {
           <SettingsRow
             emoji="🔒"
             label="Privacy Policy"
-            sublabel="We don't collect any data"
-            onPress={() =>
-              setDialog({
-                key: 'privacy',
-                title: 'Privacy Policy',
-                message:
-                  'Chai Streaks stores all your data locally on your device. We do not collect, transmit, or share any personal information, habit data, or usage statistics with any third parties. Your data never leaves your phone unless you explicitly export it.',
-                label: 'Got it'
-              })
-            }
+            sublabel="100% on-device · Zero servers"
+            onPress={() => router.push('/privacy' as any)}
           />
         </View>
 
