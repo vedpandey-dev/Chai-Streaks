@@ -135,10 +135,7 @@ function AppGate() {
           name="habit/[id]"
           options={{ animation: 'slide_from_bottom', presentation: 'modal' }}
         />
-        <Stack.Screen
-          name="privacy"
-          options={{ animation: 'slide_from_right' }}
-        />
+        <Stack.Screen name="privacy" options={{ animation: 'slide_from_right' }} />
       </Stack>
       <AppDrawer />
     </>

@@ -20,4 +20,3 @@ jobs:
     params:
       build_id: ${{ needs.build_android.outputs.build_id }}
       profile: production
-

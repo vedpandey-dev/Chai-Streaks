@@ -12,5 +12,4 @@ jobs:
     params:
       branch: production
       platform: android
-      message: "Publish update from ${{ github.sha }}"
-
+      message: 'Publish update from ${{ github.sha }}'

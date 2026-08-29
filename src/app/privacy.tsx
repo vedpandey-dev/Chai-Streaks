@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  Pressable
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
@@ -20,12 +13,7 @@ interface PolicyCardProps {
   bulletPoints?: string[];
 }
 
-function PolicySectionCard({
-  icon,
-  title,
-  description,
-  bulletPoints
-}: PolicyCardProps) {
+function PolicySectionCard({ icon, title, description, bulletPoints }: PolicyCardProps) {
   const { colors } = useTheme();
 
   return (
@@ -76,10 +64,7 @@ export default function PrivacyScreen() {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <ScreenHeader
           title="Privacy Policy"
           subtitle="Your data belongs to you alone"
@@ -110,8 +95,8 @@ export default function PrivacyScreen() {
           </View>
           <Text style={[styles.heroBody, { color: colors.text }]}>
             Chai Streaks is built from the ground up as an offline-first habit tracker. All your
-            habits, streaks, timer logs, and personal notes are stored strictly on your phone’s local
-            storage.
+            habits, streaks, timer logs, and personal notes are stored strictly on your phone’s
+            local storage.
           </Text>
         </View>
 
@@ -187,7 +172,8 @@ export default function PrivacyScreen() {
           ]}
         >
           <Text style={[styles.quoteText, { color: colors.text }]}>
-            “Your privacy is brewed into our core. No servers. No ads. Just your chai and your habits.”
+            “Your privacy is brewed into our core. No servers. No ads. Just your chai and your
+            habits.”
           </Text>
           <Text style={[styles.quoteAuthor, { color: colors.textMuted }]}>
             — The Chai Streaks Team
