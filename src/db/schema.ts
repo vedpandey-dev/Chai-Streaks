@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { type SQLiteDatabase } from 'expo-sqlite';
+import { runExclusive } from './utils';
 
 // ─── DDL strings ─────────────────────────────────────────────────────────────
 
@@ -284,8 +285,8 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     const migration = pendingMigrations[i];
     const nextVersion = currentVersion + i + 1;
 
-    await db.withExclusiveTransactionAsync(async (txn) => {
-      await migration.run(txn as unknown as SQLiteDatabase);
+    await runExclusive(db, async (txn) => {
+      await migration.run(txn);
     });
 
     await db.execAsync(`PRAGMA user_version = ${nextVersion};`);

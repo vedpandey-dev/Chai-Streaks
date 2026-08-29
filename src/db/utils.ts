@@ -2,6 +2,9 @@
 //  db/utils.ts  –  Shared helpers used across all CRUD modules
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { Platform } from 'react-native';
+import { type SQLiteDatabase } from 'expo-sqlite';
+
 // ─── Date helpers ─────────────────────────────────────────────────────────────
 
 /** Returns today's date as YYYY-MM-DD in local time */
@@ -73,6 +76,32 @@ export function daysInMonth(year: number, month: number): number {
 export function isReleasedDbError(err: unknown): boolean {
   const message = err instanceof Error ? err.message : String(err);
   return /already released|shared object/i.test(message);
+}
+
+/**
+ * Run `task` inside a transaction, using `withExclusiveTransactionAsync` on
+ * native platforms and falling back to the non-exclusive `withTransactionAsync`
+ * on web, since `withExclusiveTransactionAsync` is not supported there (see
+ * https://docs.expo.dev/versions/latest/sdk/sqlite/#withexclusivetransactionasynctask).
+ * Web is effectively single-connection anyway, so the lack of exclusivity
+ * isn't a practical concern for the writes this app makes.
+ *
+ * Always use this instead of calling `db.withExclusiveTransactionAsync`
+ * directly, so every write path works on web too.
+ */
+export async function runExclusive(
+  db: SQLiteDatabase,
+  task: (txn: SQLiteDatabase) => Promise<void>
+): Promise<void> {
+  if (Platform.OS === 'web') {
+    await db.withTransactionAsync(async () => {
+      await task(db);
+    });
+  } else {
+    await db.withExclusiveTransactionAsync(async (txn) => {
+      await task(txn as unknown as SQLiteDatabase);
+    });
+  }
 }
 
 // ─── SQL helpers ──────────────────────────────────────────────────────────────
@@ -148,6 +177,13 @@ export function computeStreaks(
   // ── current streak (scan backward from today) ────────────────────────────
   let currentStreak = 0;
   const cursor = new Date(today + 'T00:00:00');
+
+  // If today hasn't been logged yet, that's expected (the day isn't over),
+  // so don't let it zero out an otherwise-live streak — start counting from
+  // yesterday instead. Mirrors computeAccountStreak() in db/badgeMethods.ts.
+  if (!dateSet.has(toDateString(cursor))) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
 
   while (dateSet.has(toDateString(cursor))) {
     currentStreak++;

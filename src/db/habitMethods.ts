@@ -13,6 +13,7 @@ import {
   buildSetClause,
   computeStreaks,
   enumerateDates,
+  runExclusive,
   toDateString,
   todayDateString,
   type SQLiteBindValue
@@ -311,10 +312,9 @@ export async function deleteHabit(db: SQLiteDatabase, id: number): Promise<void>
  * new sort_order value.
  */
 export async function reorderHabits(db: SQLiteDatabase, habitIds: number[]): Promise<void> {
-  await db.withExclusiveTransactionAsync(async (txn) => {
-    const t = txn as unknown as SQLiteDatabase;
+  await runExclusive(db, async (txn) => {
     for (let i = 0; i < habitIds.length; i++) {
-      await t.runAsync(`UPDATE habits SET sort_order = ? WHERE id = ?`, [i, habitIds[i]]);
+      await txn.runAsync(`UPDATE habits SET sort_order = ? WHERE id = ?`, [i, habitIds[i]]);
     }
   });
 }

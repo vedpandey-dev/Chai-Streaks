@@ -15,7 +15,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { type SQLiteDatabase } from 'expo-sqlite';
-import { toDateString, enumerateDates } from './utils';
+import { toDateString, enumerateDates, runExclusive } from './utils';
 
 /** Length of one earning block, in days. */
 const BLOCK_LENGTH_DAYS = 7;
@@ -121,10 +121,9 @@ export async function checkAndAwardUserChaiScroll(
     const earned = totalPossible > 0 && rate >= SCROLL_RATE_THRESHOLD;
 
     // ── 4. Record the block as processed, and award a scroll if it earned one ─
-    await db.withExclusiveTransactionAsync(async (txn) => {
-      const t = txn as unknown as SQLiteDatabase;
+    await runExclusive(db, async (txn) => {
       if (earned) {
-        await t.runAsync(
+        await txn.runAsync(
           `UPDATE users
              SET chai_scrolls = chai_scrolls + 1,
                  scroll_blocks_processed = ?
@@ -132,7 +131,7 @@ export async function checkAndAwardUserChaiScroll(
           [blockIndex, userId]
         );
       } else {
-        await t.runAsync(`UPDATE users SET scroll_blocks_processed = ? WHERE id = ?`, [
+        await txn.runAsync(`UPDATE users SET scroll_blocks_processed = ? WHERE id = ?`, [
           blockIndex,
           userId
         ]);
@@ -188,13 +187,12 @@ export async function recoverHabitStreak(
     throw new Error('recoverHabitStreak: that day is already logged');
   }
 
-  await db.withExclusiveTransactionAsync(async (txn) => {
-    const t = txn as unknown as SQLiteDatabase;
-    await t.runAsync(
+  await runExclusive(db, async (txn) => {
+    await txn.runAsync(
       `INSERT INTO habit_history (habit_id, user_id, date, status, completion_count)
        VALUES (?, ?, ?, 'frozen', 0)`,
       [habitId, userId, date]
     );
-    await t.runAsync(`UPDATE users SET chai_scrolls = chai_scrolls - 1 WHERE id = ?`, [userId]);
+    await txn.runAsync(`UPDATE users SET chai_scrolls = chai_scrolls - 1 WHERE id = ?`, [userId]);
   });
 }
