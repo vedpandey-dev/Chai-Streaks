@@ -22,7 +22,6 @@ import TodayProgressCard from '../../components/home/TodayProgressCard';
 import StatCard from '../../components/home/StatCard';
 import EmptyHabits from '../../components/home/EmptyHabits';
 import MissedHabitsDialog from '../../components/home/MissedHabitsDialog';
-import DailyTasksCard from '../../components/home/DailyTasksCard';
 import DraggableHabitList from '../../components/home/DraggableHabitList';
 
 export default function HomeScreen() {
@@ -124,9 +123,6 @@ export default function HomeScreen() {
           bg={colors.card}
         />
       </View>
-
-      {/* Daily Tasks */}
-      <DailyTasksCard />
 
       {/* Habits section header */}
       <View style={styles.sectionHeader}>

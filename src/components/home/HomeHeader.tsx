@@ -57,7 +57,7 @@ export default function HomeHeader({ colors, user }: Props) {
         >
           <Text style={[styles.menuIcon, { color: colors.text }]}>☰</Text>
         </Pressable>
-        <View>
+        <View style={styles.headerText}>
           <Text style={[styles.greeting, { color: colors.text }]}>{getGreeting(firstName)}</Text>
           <Text style={[styles.date, { color: colors.textSecondary }]}>
             {formatDate(new Date())}
@@ -167,7 +167,12 @@ const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.sm
+    gap: SPACING.sm,
+    flexShrink: 1
+  },
+
+  headerText: {
+    flexShrink: 1
   },
 
   menuBtn: {
@@ -188,13 +193,17 @@ const styles = StyleSheet.create({
   greeting: {
     fontFamily: FONTS.wavy,
     fontSize: 24,
-    letterSpacing: 0.2
+    letterSpacing: 0.2,
+    // Kalam has very tall default line metrics — pin the line height so the
+    // greeting/date block stays compact and centers cleanly against the avatar.
+    lineHeight: 28
   },
 
   date: {
     fontFamily: FONTS.handwritten,
     fontSize: 14,
-    marginTop: 1
+    lineHeight: 17,
+    marginTop: 2
   },
 
   headerRight: {

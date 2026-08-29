@@ -128,7 +128,6 @@ chai-streaks/
     │   │   ├── Label.tsx
     │   │   └── Section.tsx
     │   ├── home/              # Home screen components
-    │   │   ├── DailyTasksCard.tsx
     │   │   ├── DraggableHabitList.tsx
     │   │   ├── EmptyHabits.tsx
     │   │   ├── HabitCard.tsx

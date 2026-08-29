@@ -1,9 +1,9 @@
 export function getGreeting(name?: string): string {
   const hour = new Date().getHours();
   const suffix = name ? `, ${name} ☕` : ' ☕';
-  if (hour < 12) return `Good Morning${suffix}`;
-  if (hour < 17) return `Good Afternoon${suffix}`;
-  return `Good Evening${suffix}`;
+  if (hour < 12) return `Morning${suffix}`;
+  if (hour < 17) return `Afternoon${suffix}`;
+  return `Evening${suffix}`;
 }
 
 export function formatDate(date: Date): string {
