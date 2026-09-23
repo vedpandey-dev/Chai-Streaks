@@ -258,6 +258,16 @@ const MIGRATIONS: { name: string; run: MigrationFn }[] = [
         END;
       `);
     }
+  },
+  {
+    // The Daily Tasks feature has been removed from the app entirely, so
+    // drop the table (and its trigger) it left behind on already-migrated
+    // devices. `daily_tasks` is not created by any migration after this one.
+    name: 'v10_drop_daily_tasks',
+    run: async (db) => {
+      await db.execAsync(`DROP TRIGGER IF EXISTS trg_daily_tasks_updated_at;`);
+      await db.execAsync(`DROP TABLE IF EXISTS daily_tasks;`);
+    }
   }
 ];
 

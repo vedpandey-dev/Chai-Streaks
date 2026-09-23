@@ -73,17 +73,6 @@ export {
   updateTimeEntry
 } from './timeMethods';
 
-// Daily tasks
-export {
-  createDailyTask,
-  deleteDailyTask,
-  deleteDailyTasksForDate,
-  getDailyTasksForDate,
-  getTodayTasks,
-  toggleDailyTask,
-  updateDailyTask
-} from './taskMethods';
-
 // Preferences (AsyncStorage)
 export {
   clearActiveUserId,
