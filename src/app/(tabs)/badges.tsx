@@ -84,11 +84,6 @@ export default function BadgesScreen() {
       badges: BADGE_DEFINITIONS.filter((b) => b.category === 'habits')
     },
     {
-      key: 'tasks',
-      label: '📋 Daily Tasks',
-      badges: BADGE_DEFINITIONS.filter((b) => b.category === 'tasks')
-    },
-    {
       key: 'score',
       label: '☕ Chai Score',
       badges: BADGE_DEFINITIONS.filter((b) => b.category === 'score')

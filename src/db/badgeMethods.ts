@@ -13,8 +13,7 @@ export interface BadgeDefinition {
   emoji: string;
   title: string;
   description: string;
-  category:
-    'streak' | 'completions' | 'habits' | 'tasks' | 'score' | 'perfect' | 'scrolls' | 'time';
+  category: 'streak' | 'completions' | 'habits' | 'score' | 'perfect' | 'scrolls' | 'time';
   threshold: number;
 }
 
@@ -183,48 +182,6 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     description: 'Master 7 daily habits',
     category: 'habits',
     threshold: 7
-  },
-
-  // ── Daily Task tracking badges ──
-  {
-    key: 'tasks_1',
-    emoji: '📝',
-    title: 'First Task',
-    description: 'Complete your first daily task',
-    category: 'tasks',
-    threshold: 1
-  },
-  {
-    key: 'tasks_10',
-    emoji: '📋',
-    title: 'Task Tackler',
-    description: 'Complete 10 daily tasks',
-    category: 'tasks',
-    threshold: 10
-  },
-  {
-    key: 'tasks_25',
-    emoji: '⚡',
-    title: 'Action Oriented',
-    description: 'Complete 25 daily tasks',
-    category: 'tasks',
-    threshold: 25
-  },
-  {
-    key: 'tasks_50',
-    emoji: '🎯',
-    title: 'Productivity Pro',
-    description: 'Complete 50 daily tasks',
-    category: 'tasks',
-    threshold: 50
-  },
-  {
-    key: 'tasks_100',
-    emoji: '🏆',
-    title: 'Execution Master',
-    description: 'Complete 100 daily tasks',
-    category: 'tasks',
-    threshold: 100
   },
 
   // ── Chai Score badges ──
@@ -492,13 +449,6 @@ export async function evaluateAndAwardBadges(
   // Time tracking stats
   const timeStats = await getTimeTrackingStats(db, userId);
 
-  // Daily task completion stats
-  const taskRow = await db.getFirstAsync<{ total: number }>(
-    `SELECT COUNT(*) AS total FROM daily_tasks WHERE user_id = ? AND is_completed = 1`,
-    [userId]
-  );
-  const totalTasksCompleted = taskRow?.total ?? 0;
-
   // Evaluate each badge
   const newBadges: BadgeDefinition[] = [];
 
@@ -515,9 +465,6 @@ export async function evaluateAndAwardBadges(
         break;
       case 'habits':
         earned = activeHabits >= badge.threshold;
-        break;
-      case 'tasks':
-        earned = totalTasksCompleted >= badge.threshold;
         break;
       case 'score':
         earned = chaiScore >= badge.threshold;
