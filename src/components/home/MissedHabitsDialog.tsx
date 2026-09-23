@@ -76,7 +76,13 @@ export default function MissedHabitsDialog({
                 : `All done! Great job catching up on ${yesterdayLabel}.`}
             </Text>
 
-            <ScrollView style={styles.habitList} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={styles.habitList}
+              contentContainerStyle={styles.habitListContent}
+              showsVerticalScrollIndicator={true}
+              indicatorStyle="black"
+              nestedScrollEnabled
+            >
               {habits.map((habit) => {
                 const isMarked = markedIds.has(habit.id);
                 return (
@@ -99,16 +105,17 @@ export default function MissedHabitsDialog({
                           { color: colors.text },
                           isMarked && styles.habitNameDone
                         ]}
-                        numberOfLines={1}
+                        numberOfLines={2}
                       >
                         {habit.title}
                       </Text>
+                      {isMarked && (
+                        <View style={[styles.doneBadge, { backgroundColor: colors.success + '22' }]}>
+                          <Text style={[styles.doneBadgeText, { color: colors.success }]}>✓</Text>
+                        </View>
+                      )}
                     </View>
-                    {isMarked ? (
-                      <View style={[styles.doneBadge, { backgroundColor: colors.success + '22' }]}>
-                        <Text style={[styles.doneBadgeText, { color: colors.success }]}>✓</Text>
-                      </View>
-                    ) : (
+                    {!isMarked && (
                       <View style={styles.habitActions}>
                         <Pressable
                           style={({ pressed }) => [
@@ -177,8 +184,8 @@ const styles = StyleSheet.create({
   },
   box: {
     width: '100%',
-    maxWidth: 380,
-    maxHeight: '80%',
+    maxWidth: 440,
+    maxHeight: '90%',
     borderRadius: RADII['2xl'],
     borderWidth: 1,
     padding: SPACING.xl,
@@ -208,28 +215,32 @@ const styles = StyleSheet.create({
   },
   habitList: {
     width: '100%',
-    maxHeight: 300
+    flexGrow: 0,
+    maxHeight: 460
+  },
+  habitListContent: {
+    paddingBottom: SPACING.xs
   },
   habitRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    alignItems: 'stretch',
     padding: SPACING.md,
     borderRadius: RADII.lg,
     borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: SPACING.sm
+    marginBottom: SPACING.sm,
+    gap: SPACING.sm
   },
   habitInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
-    flex: 1
+    width: '100%'
   },
   habitEmoji: {
-    fontSize: 22
+    fontSize: 24
   },
   habitName: {
-    fontSize: TYPOGRAPHY.base,
+    fontSize: TYPOGRAPHY.md,
     fontWeight: TYPOGRAPHY.semibold,
     flex: 1
   },
@@ -238,27 +249,30 @@ const styles = StyleSheet.create({
   },
   habitActions: {
     flexDirection: 'row',
-    gap: SPACING.xs
+    justifyContent: 'flex-end',
+    gap: SPACING.sm,
+    width: '100%'
   },
   actionBtn: {
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: SPACING.xs,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
     borderRadius: RADII.md,
     borderWidth: 1
   },
   actionText: {
-    fontSize: TYPOGRAPHY.xs,
+    fontSize: TYPOGRAPHY.sm,
     fontWeight: TYPOGRAPHY.bold
   },
   doneBadge: {
-    width: 28,
-    height: 28,
+    width: 26,
+    height: 26,
     borderRadius: RADII.full,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginLeft: 'auto'
   },
   doneBadgeText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: TYPOGRAPHY.bold
   },
   divider: {
