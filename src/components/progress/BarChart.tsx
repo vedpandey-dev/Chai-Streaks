@@ -56,10 +56,10 @@ export default function BarChart({ bars, mode }: { bars: DayBar[]; mode: '7' | '
               onPress={() => setSelectedDate(isSelected ? null : bar.date)}
               style={({ pressed }) => [styles.barCol, { width: barW, opacity: pressed ? 0.7 : 1 }]}
             >
-              {/* count label on top for 7-day */}
-              {mode === '7' && bar.count > 0 && (
+              {/* completion % label on top for 7-day */}
+              {mode === '7' && bar.total > 0 && (
                 <Text style={[styles.barCountLabel, { color: colors.textSecondary }]}>
-                  {bar.count}
+                  {Math.round((bar.count / bar.total) * 100)}%
                 </Text>
               )}
 
