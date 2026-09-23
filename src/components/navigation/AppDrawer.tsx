@@ -40,13 +40,6 @@ const NAV_ITEMS: NavItem[] = [
     description: "Today's habits & routine"
   },
   {
-    key: 'tasks',
-    route: '/tasks',
-    icon: '📋',
-    label: 'Daily Tasks',
-    description: 'Task checklist & planning'
-  },
-  {
     key: 'timer',
     route: '/timer',
     icon: '⏱️',

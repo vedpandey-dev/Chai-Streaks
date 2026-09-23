@@ -107,7 +107,7 @@ export default function PrivacyScreen() {
           description="Everything you create in Chai Streaks is kept within a secure, sandboxed SQLite database directly on your device."
           bulletPoints={[
             'Habit definitions, streak milestones, and completion history',
-            'Focus timer logs and custom tasks',
+            'Focus timer logs and session history',
             'Earned achievements, scroll points, and app preferences',
             'Your data is never transmitted to cloud servers'
           ]}

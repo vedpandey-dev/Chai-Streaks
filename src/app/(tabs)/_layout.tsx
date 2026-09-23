@@ -42,12 +42,6 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="tasks"
-        options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📋" label="Tasks" focused={focused} />
-        }}
-      />
-      <Tabs.Screen
         name="timer"
         options={{
           tabBarIcon: ({ focused }) => <TabIcon emoji="⏱️" label="Timer" focused={focused} />
