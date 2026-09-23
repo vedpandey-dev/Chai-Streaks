@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
-import * as Notifications from 'expo-notifications';
 import {
   getHabitsWithStreaks,
   upsertHabitHistory,
@@ -55,22 +54,14 @@ interface HabitsContextValue {
 const HabitsContext = createContext<HabitsContextValue | null>(null);
 
 /**
- * Owns ALL habit/today's-history state for the whole app, including the one
- * and only `Notifications.setBadgeCountAsync` side effect.
+ * Owns ALL habit/today's-history state for the whole app.
  *
  * This used to live in a plain `useHabits()` hook that every screen called
- * independently. That meant every screen (Home *and* Progress) instantiated
- * its own copy of `habits`/`todayHistory`, each with its own badge-setting
- * `useEffect`. Those two copies loaded asynchronously and re-rendered on
- * their own schedules, so whichever instance's effect happened to fire last
- * (e.g. right after switching tabs, while the *other* screen's fetch was
- * still mid-flight with a stale/partial `todayHistory`) would silently
- * overwrite the OS badge with a wrong number — which is exactly how the
- * badge could get stuck on "1" even though every habit on screen was
- * already marked. Provisioning this state once, here, and having every
- * screen read the *same* instance via `useHabits()` below removes that
- * duplicate-effect race entirely: there is now only one place that ever
- * calls `setBadgeCountAsync`, and it always reflects the latest data.
+ * independently, which meant every screen (Home *and* Progress) instantiated
+ * its own copy of `habits`/`todayHistory` that loaded asynchronously and
+ * re-rendered on its own schedule. Provisioning this state once, here, and
+ * having every screen read the *same* instance via `useHabits()` below
+ * avoids that duplicate-state problem entirely.
  */
 export function HabitsProvider({ children }: { children: React.ReactNode }) {
   const db = useSQLiteContext();
@@ -342,38 +333,6 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
 
   const completedCount = Object.values(todayHistory).filter((h) => h.status === 'completed').length;
   const completionRate = habits.length > 0 ? completedCount / habits.length : 0;
-
-  // Only habits actually scheduled for today count toward the badge, and a
-  // habit counts as "handled" the moment it has ANY status recorded for
-  // today — completed *or* skipped/failed — not just completed. That's the
-  // distinction between "done for today" (badge-relevant) and "completed"
-  // (a separate, stricter stat shown elsewhere in the UI).
-  const dueTodayHabits = habits.filter((h) => isHabitDueToday(h));
-  const dueTodayMarkedCount = dueTodayHabits.filter((h) => !!todayHistory[h.id]).length;
-  const pendingCount = Math.max(0, dueTodayHabits.length - dueTodayMarkedCount);
-
-  // This is the ONLY place in the app that touches the OS badge. Because
-  // HabitsProvider is mounted exactly once (in the root layout), there's no
-  // other instance around to race with and stomp this value.
-  //
-  // We use a stable string key derived from the actual pending state so the
-  // effect fires reliably whenever the count changes, regardless of array
-  // reference identity.
-  const badgeKey = `${userId}:${pendingCount}`;
-  useEffect(() => {
-    if (!userId) return;
-    Notifications.setBadgeCountAsync(pendingCount).catch(() => {});
-    if (pendingCount === 0) {
-      // dismissAllNotificationsAsync clears anything sitting in the system
-      // notification tray. On several Android launchers (Samsung One UI,
-      // MIUI, etc.) the home-screen badge is driven by the actual tray
-      // notification count rather than by setBadgeCountAsync, so a stray
-      // already-delivered reminder notification can keep the badge showing
-      // even after setBadgeCountAsync(0) — clearing the tray is what
-      // actually resets it on those devices.
-      Notifications.dismissAllNotificationsAsync().catch(() => {});
-    }
-  }, [badgeKey, pendingCount, userId]);
 
   const reorderHabits = useCallback(
     async (habitIds: number[]) => {

@@ -13,7 +13,7 @@ export function configureNotificationHandler() {
       shouldShowBanner: true,
       shouldShowList: true,
       shouldPlaySound: true,
-      shouldSetBadge: true
+      shouldSetBadge: false
     })
   });
 }
